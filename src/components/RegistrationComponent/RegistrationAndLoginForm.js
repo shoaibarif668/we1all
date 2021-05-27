@@ -73,7 +73,7 @@ const RegistrationAndLoginForm = () => {
           // console.log(user);
           if (user != null) {
             uid = user.uid;
-            firebaseDb.database().ref().child(uid).set(obj);
+            firebaseDb.database().ref().child('users').child(uid).set(obj);
             toastr.clear()
             setTimeout(() => toastr.success(`Register successfully... `), 300)      
           }
@@ -313,7 +313,6 @@ const RegistrationAndLoginForm = () => {
                   <div className="tab-pane active" id="register">
                     <h3>Register Now !!!</h3>
                     <p className="text-muted">Be cool and join today. Meet millions</p>
-
                     <form name="registration_form" id='registration_form' className="form-inline" onSubmit={handleFormSubmit}>
                       <div className="row">
                         <div className="form-group col-xs-6">
