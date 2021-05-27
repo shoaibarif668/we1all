@@ -24,8 +24,6 @@ const RegistrationAndLoginForm = () => {
   const errors = {}
   var [values, setValues] = useState(initialFieldValues)
   var [login, setLogin] = useState(LoginObj)
-  var [field, setFields] = useState(fields)
-  var [error, setErrors] = useState(errors)
   useEffect(() => {
     firebaseDb.database().ref().child('users').on('value', snapshot => {
       if (snapshot.val() != null) {
@@ -43,7 +41,6 @@ const RegistrationAndLoginForm = () => {
       [name]: value
     })
     fields[name] = value;
-    // console.log(name, value)
   }
   const handleInputLoginChange = e => {
     var { name, value } = e.target;
@@ -52,7 +49,6 @@ const RegistrationAndLoginForm = () => {
       [name]: value
     })
     fields[name] = value;
-    // console.log(name, value)
   }
   useEffect(() => {
     if (currentId == '')
@@ -70,94 +66,20 @@ const RegistrationAndLoginForm = () => {
         .then((userCredential) => {
           // Signed in 
           var user = userCredential.user;
-          // console.log(user);
           if (user != null) {
             uid = user.uid;
             firebaseDb.database().ref().child('users').child(uid).set(obj);
             toastr.clear()
             setTimeout(() => toastr.success(`Register successfully... `), 300)      
           }
-          // ...
         })
         .catch((error) => {
-          //var errorCode = error.code;
+          
           if(error.code=='auth/email-already-in-use') {
             toastr.clear()
             setTimeout(() => toastr.error(error.message), 300)  
           }
-         // var errorMessage = error.message;
-          // ..
         });
-    // console.log(uid);
-
-    // firebaseDb.database().ref().child('users').push(
-    //     obj,
-    //     err => {
-    //         if (err)
-    //             console.log(err)
-    //         else
-    //             setCurrentId('')
-    //     })
-    // else
-    // firebaseDb.child(`contacts/${currentId}`).set(
-    //     obj,
-    //     err => {
-    //         if (err)
-    //             console.log(err)
-    //         else
-    //             setCurrentId('')
-    //     })
-  }
-
-  const handleValidation = e => {
-    let fields = values;
-    let errors = {};
-    let formIsValid = true;
-
-    //Name
-    if (!fields["firstname"]) {
-      formIsValid = false;
-      errors["firstname"] = "Cannot be empty";
-    }
-
-    if (typeof fields["firstname"] !== "undefined") {
-      if (!fields["firstname"].match(/^[a-zA-Z]+$/)) {
-        formIsValid = false;
-        errors["firstname"] = "Only letters";
-      }
-    }
-
-    //Name
-    if (!fields["lastname"]) {
-      formIsValid = false;
-      errors["lastname"] = "Cannot be empty";
-    }
-
-    if (typeof fields["lastname"] !== "undefined") {
-      if (!fields["lastname"].match(/^[a-zA-Z]+$/)) {
-        formIsValid = false;
-        errors["lastname"] = "Only letters";
-      }
-    }
-
-    //Email
-    if (!fields["email"]) {
-      formIsValid = false;
-      errors["email"] = "Cannot be empty";
-    }
-
-    if (typeof fields["email"] !== "undefined") {
-      let lastAtPos = fields["email"].lastIndexOf('@');
-      let lastDotPos = fields["email"].lastIndexOf('.');
-
-      if (!(lastAtPos < lastDotPos && lastAtPos > 0 && fields["email"].indexOf('@@') == -1 && lastDotPos > 2 && (fields["email"].length - lastDotPos) > 2)) {
-        formIsValid = false;
-        errors["email"] = "Email is not valid";
-      }
-    }
-
-    // this.setState({ errors: errors });
-    return formIsValid;
   }
   const handleFormSubmit = e => {
     e.preventDefault()
@@ -232,18 +154,7 @@ const RegistrationAndLoginForm = () => {
       setTimeout(() => toastr.error(`Country Cannot be empty`), 300)
       return;
     }
-    // if(handleValidation) {
-    //   console.log(values.firstname)
-    //   console.log("FALSE",handleValidation)
-    // }
-    // else {
-    //   console.log(handleValidation)
-
-    //   console.log(values)
-      
       addOrEdit(values);
-    // }
-   
   }
   const handleFormLogin = e => {
     e.preventDefault()
@@ -279,13 +190,11 @@ const RegistrationAndLoginForm = () => {
         var user = userCredential.user;
         toastr.clear()
         setTimeout(() => toastr.success(`Login Successful`), 300)
-        // ...
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
       });
-    console.log(login)
   };
   return (
     <>
@@ -301,14 +210,12 @@ const RegistrationAndLoginForm = () => {
             </div>
             <div className="col-sm-6 col-sm-offset-1">
               <div className="reg-form-container">
-
                 <div className="reg-options">
                   <ul className="nav nav-tabs">
                     <li className="active"><a href="#register" data-toggle="tab">Register</a></li>
                     <li><a href="#login" data-toggle="tab">Login</a></li>
                   </ul>
                 </div>
-
                 <div className="tab-content">
                   <div className="tab-pane active" id="register">
                     <h3>Register Now !!!</h3>
@@ -321,7 +228,6 @@ const RegistrationAndLoginForm = () => {
                             value={values.firstname}
                             onChange={handleInputChange} />
                           <span style={{ color: "red" }}>{errors["firstname"]}</span>
-                          
                         </div>
                         <div className="form-group col-xs-6">
                           <label htmlFor="lastname" className="sr-only">Last Name</label>
@@ -330,7 +236,6 @@ const RegistrationAndLoginForm = () => {
                             onChange={handleInputChange}
                           />
                           <span style={{ color: "red" }}>{errors["lastname"]}</span>
-                         
                         </div>
                       </div>
                       <div className="row">
@@ -708,10 +613,7 @@ const RegistrationAndLoginForm = () => {
                       <p><a href="#">Already have an account?</a></p>
                       <button className="btn btn-primary" type="submit">Register Now</button>
                     </form>
-
                   </div>
-
-
                   <div className="tab-pane" id="login">
                     <h3>Login</h3>
                     <p className="text-muted">Log into your account</p>
@@ -744,8 +646,6 @@ const RegistrationAndLoginForm = () => {
           </div>
           <div className="row">
             <div className="col-sm-6 col-sm-offset-6">
-
-
               <ul className="list-inline social-icons">
                 <li><a href="#"><i className="icon ion-social-facebook"></i></a></li>
                 <li><a href="#"><i className="icon ion-social-twitter"></i></a></li>
