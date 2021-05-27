@@ -18,9 +18,12 @@ const RegistrationAndLoginForm = () => {
     city:'',
     country:''
   }
+  const LoginObj={useremail:'',userpassword:''};
+
   const fields = {}
   const errors = {}
   var [values, setValues] = useState(initialFieldValues)
+  var [login, setLogin] = useState(LoginObj)
   var [field, setFields] = useState(fields)
   var [error, setErrors] = useState(errors)
   useEffect(() => {
@@ -37,6 +40,15 @@ const RegistrationAndLoginForm = () => {
     var { name, value } = e.target;
     setValues({
       ...values,
+      [name]: value
+    })
+    fields[name] = value;
+    // console.log(name, value)
+  }
+  const handleInputLoginChange = e => {
+    var { name, value } = e.target;
+    setLogin({
+      ...login,
       [name]: value
     })
     fields[name] = value;
@@ -233,46 +245,88 @@ const RegistrationAndLoginForm = () => {
     // }
    
   }
+  const handleFormLogin = e => {
+    e.preventDefault()
+    if(!login.useremail) {
+      toastr.clear()
+      setTimeout(() => toastr.error(`Email Cannot be empty`), 300)
+      return;
+    }
+    if (typeof login.useremail !== "undefined") {
+      let lastAtPos = login.useremail.lastIndexOf('@');
+      let lastDotPos = login.useremail.lastIndexOf('.');
+      if (!(lastAtPos < lastDotPos && lastAtPos > 0 && login.useremail.indexOf('@@') == -1 && lastDotPos > 2 && (login.useremail.length - lastDotPos) > 2)) {
+        toastr.clear()
+        setTimeout(() => toastr.error(`Email is not valid`), 300)
+        return;
+      }
+    }
+    if(!login.userpassword) {
+      toastr.clear()
+      setTimeout(() => toastr.error(`Password Cannot be empty`), 300)
+      return;
+    }
+    if(typeof login.userpassword !== "undefined") {
+      if(login.userpassword.length < 6) {
+        toastr.clear()
+        setTimeout(() => toastr.error(`Password must be at least 6 characters`), 300)
+        return;
+      }
+    }
+    firebaseDb.auth().signInWithEmailAndPassword(login.useremail, login.userpassword)
+      .then((userCredential) => {
+        // Signed in
+        var user = userCredential.user;
+        toastr.clear()
+        setTimeout(() => toastr.success(`Login Successful`), 300)
+        // ...
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      });
+    console.log(login)
+  };
   return (
     <>
       <div id="lp-register">
-        <div class="container wrapper">
-          <div class="row">
-            <div class="col-sm-5">
-              <div class="intro-texts">
-                <h1 class="text-white">Make Cool Friends !!!</h1>
+        <div className="container wrapper">
+          <div className="row">
+            <div className="col-sm-5">
+              <div className="intro-texts">
+                <h1 className="text-white">Make Cool Friends !!!</h1>
                 <p>Friend Finder is a social network template that can be used to connect people. The template offers Landing pages, News Feed, Image/Video Feed, Chat Box, Timeline and lot more. <br /> <br />Why are you waiting for? Buy it now.</p>
-                <button class="btn btn-primary">Learn More</button>
+                <button className="btn btn-primary">Learn More</button>
               </div>
             </div>
-            <div class="col-sm-6 col-sm-offset-1">
-              <div class="reg-form-container">
+            <div className="col-sm-6 col-sm-offset-1">
+              <div className="reg-form-container">
 
-                <div class="reg-options">
-                  <ul class="nav nav-tabs">
-                    <li class="active"><a href="#register" data-toggle="tab">Register</a></li>
+                <div className="reg-options">
+                  <ul className="nav nav-tabs">
+                    <li className="active"><a href="#register" data-toggle="tab">Register</a></li>
                     <li><a href="#login" data-toggle="tab">Login</a></li>
                   </ul>
                 </div>
 
-                <div class="tab-content">
-                  <div class="tab-pane active" id="register">
+                <div className="tab-content">
+                  <div className="tab-pane active" id="register">
                     <h3>Register Now !!!</h3>
-                    <p class="text-muted">Be cool and join today. Meet millions</p>
+                    <p className="text-muted">Be cool and join today. Meet millions</p>
 
-                    <form name="registration_form" id='registration_form' class="form-inline" onSubmit={handleFormSubmit}>
-                      <div class="row">
-                        <div class="form-group col-xs-6">
-                          <label for="firstname" class="sr-only">First Name</label>
-                          <input id="firstname" class="form-control input-group-lg" type="text" name="firstname" title="Enter first name" placeholder="First name"
+                    <form name="registration_form" id='registration_form' className="form-inline" onSubmit={handleFormSubmit}>
+                      <div className="row">
+                        <div className="form-group col-xs-6">
+                          <label htmlFor="firstname" className="sr-only">First Name</label>
+                          <input id="firstname" className="form-control input-group-lg" type="text" name="firstname" title="Enter first name" placeholder="First name"
                             value={values.firstname}
                             onChange={handleInputChange} />
                           <span style={{ color: "red" }}>{errors["firstname"]}</span>
                           
                         </div>
-                        <div class="form-group col-xs-6">
-                          <label for="lastname" class="sr-only">Last Name</label>
-                          <input id="lastname" class="form-control input-group-lg" type="text" name="lastname" title="Enter last name" placeholder="Last name"
+                        <div className="form-group col-xs-6">
+                          <label htmlFor="lastname" className="sr-only">Last Name</label>
+                          <input id="lastname" className="form-control input-group-lg" type="text" name="lastname" title="Enter last name" placeholder="Last name"
                             value={values.lastname}
                             onChange={handleInputChange}
                           />
@@ -280,28 +334,28 @@ const RegistrationAndLoginForm = () => {
                          
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="form-group col-xs-12">
-                          <label for="email" class="sr-only">Email</label>
-                          <input id="email" class="form-control input-group-lg" type="text" name="email" title="Enter Email" placeholder="Your Email"
+                      <div className="row">
+                        <div className="form-group col-xs-12">
+                          <label htmlFor="email" className="sr-only">Email</label>
+                          <input id="email" className="form-control input-group-lg" type="text" name="email" title="Enter Email" placeholder="Your Email"
                             value={values.email}
                             onChange={handleInputChange}
                           />
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="form-group col-xs-12">
-                          <label for="password" class="sr-only">Password</label>
-                          <input id="password" class="form-control input-group-lg" type="password" name="password" title="Enter password" placeholder="Password"
+                      <div className="row">
+                        <div className="form-group col-xs-12">
+                          <label htmlFor="password" className="sr-only">Password</label>
+                          <input id="password" className="form-control input-group-lg" type="password" name="password" title="Enter password" placeholder="Password"
                             value={values.password}
                             onChange={handleInputChange} />
                         </div>
                       </div>
-                      <div class="row">
-                        <p class="birth"><strong>Date of Birth</strong></p>
-                        <div class="form-group col-sm-3 col-xs-6">
-                          <label for="month" class="sr-only"></label>
-                          <select class="form-control" id="day" name="day" value={values.day}
+                      <div className="row">
+                        <p className="birth"><strong>Date of Birth</strong></p>
+                        <div className="form-group col-sm-3 col-xs-6">
+                          <label htmlFor="month" className="sr-only"></label>
+                          <select className="form-control" id="day" name="day" value={values.day}
                             onChange={handleInputChange}>
                             <option value="Day" disabled selected>Day</option>
                             <option>1</option>
@@ -337,9 +391,9 @@ const RegistrationAndLoginForm = () => {
                             <option>31</option>
                           </select>
                         </div>
-                        <div class="form-group col-sm-3 col-xs-6">
-                          <label for="month" class="sr-only"></label>
-                          <select class="form-control" id="month" name="month"
+                        <div className="form-group col-sm-3 col-xs-6">
+                          <label htmlFor="month" className="sr-only"></label>
+                          <select className="form-control" id="month" name="month"
                             value={values.month}
                             onChange={handleInputChange}>
                             <option value="month" disabled selected>Month</option>
@@ -357,9 +411,9 @@ const RegistrationAndLoginForm = () => {
                             <option>Dec</option>
                           </select>
                         </div>
-                        <div class="form-group col-sm-6 col-xs-12">
-                          <label for="year" class="sr-only"></label>
-                          <select class="form-control" id="year" name="year"
+                        <div className="form-group col-sm-6 col-xs-12">
+                          <label htmlFor="year" className="sr-only"></label>
+                          <select className="form-control" id="year" name="year"
                             value={values.year}
                             onChange={handleInputChange}>
                             <option value="year" disabled selected>Year</option>
@@ -378,25 +432,25 @@ const RegistrationAndLoginForm = () => {
                           </select>
                         </div>
                       </div>
-                      <div class="form-group gender">
-                        <label class="radio-inline">
+                      <div className="form-group gender">
+                        <label className="radio-inline">
                           <input type="radio" name="gender" value="Male" checked onChange={handleInputChange} />Male
                       </label>
-                        <label class="radio-inline">
+                        <label className="radio-inline">
                           <input type="radio" name="gender" value="Female" onChange={handleInputChange} />Female
                       </label>
                       </div>
-                      <div class="row">
-                        <div class="form-group col-xs-6">
-                          <label for="city" class="sr-only">City</label>
-                          <input id="city" class="form-control input-group-lg reg_name" type="text" name="city" title="Enter city" placeholder="Your city"
+                      <div className="row">
+                        <div className="form-group col-xs-6">
+                          <label htmlFor="city" className="sr-only">City</label>
+                          <input id="city" className="form-control input-group-lg reg_name" type="text" name="city" title="Enter city" placeholder="Your city"
                             value={values.city}
                             onChange={handleInputChange}
                           />
                         </div>
-                        <div class="form-group col-xs-6">
-                          <label for="country" class="sr-only"></label>
-                          <select class="form-control" id="country" name="country"
+                        <div className="form-group col-xs-6">
+                          <label htmlFor="country" className="sr-only"></label>
+                          <select className="form-control" id="country" name="country"
 
                             onChange={handleInputChange}>
                             <option value="country" disabled selected>Country</option>
@@ -653,47 +707,52 @@ const RegistrationAndLoginForm = () => {
                         </div>
                       </div>
                       <p><a href="#">Already have an account?</a></p>
-                      <button class="btn btn-primary" type="submit">Register Now</button>
+                      <button className="btn btn-primary" type="submit">Register Now</button>
                     </form>
 
                   </div>
 
 
-                  {/* <div class="tab-pane" id="login">
+                  <div className="tab-pane" id="login">
                     <h3>Login</h3>
-                    <p class="text-muted">Log into your account</p>
+                    <p className="text-muted">Log into your account</p>
 
-                    <form name="Login_form" id='Login_form'>
-                      <div class="row">
-                        <div class="form-group col-xs-12">
-                          <label for="my-email" class="sr-only">Email</label>
-                          <input id="my-email" class="form-control input-group-lg" type="text" name="Email" title="Enter Email" placeholder="Your Email" />
+                    <form name="Login_form" action="#" id='Login_form' onSubmit={handleFormLogin}>
+                      <div className="row">
+                        <div className="form-group col-xs-12">
+                          <label htmlFor="my-email" className="sr-only">Email</label>
+                          <input id="my-email" className="form-control input-group-lg" type="text" name="useremail" title="Enter Email" placeholder="Your Email"
+                            value={login.useremail}
+                            onChange={handleInputLoginChange} />
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="form-group col-xs-12">
-                          <label for="my-password" class="sr-only">Password</label>
-                          <input id="my-password" class="form-control input-group-lg" type="password" name="password" title="Enter password" placeholder="Password" />
+                      <div className="row">
+                        <div className="form-group col-xs-12">
+                          <label htmlFor="my-password" className="sr-only">Password</label>
+                          <input id="my-password" className="form-control input-group-lg" type="password" name="userpassword" title="Enter password" placeholder="Password" 
+                          value={login.userpassword}
+                          onChange={handleInputLoginChange}/>
                         </div>
                       </div>
+                      <p><a href="#">Forgot Password?</a></p>
+                       <button className="btn btn-primary" type="submit">Login Now</button>
                     </form>
-                    <p><a href="#">Forgot Password?</a></p>
-                    <button class="btn btn-primary">Login Now</button>
-                  </div> */}
+                    
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6 col-sm-offset-6">
+          <div className="row">
+            <div className="col-sm-6 col-sm-offset-6">
 
 
-              <ul class="list-inline social-icons">
-                <li><a href="#"><i class="icon ion-social-facebook"></i></a></li>
-                <li><a href="#"><i class="icon ion-social-twitter"></i></a></li>
-                <li><a href="#"><i class="icon ion-social-googleplus"></i></a></li>
-                <li><a href="#"><i class="icon ion-social-pinterest"></i></a></li>
-                <li><a href="#"><i class="icon ion-social-linkedin"></i></a></li>
+              <ul className="list-inline social-icons">
+                <li><a href="#"><i className="icon ion-social-facebook"></i></a></li>
+                <li><a href="#"><i className="icon ion-social-twitter"></i></a></li>
+                <li><a href="#"><i className="icon ion-social-googleplus"></i></a></li>
+                <li><a href="#"><i className="icon ion-social-pinterest"></i></a></li>
+                <li><a href="#"><i className="icon ion-social-linkedin"></i></a></li>
               </ul>
             </div>
           </div>
