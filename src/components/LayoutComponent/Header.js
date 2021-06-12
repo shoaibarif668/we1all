@@ -1,9 +1,24 @@
-import React from "react"
+import React, { useEffect,useState } from "react"
 import {Container} from "react-bootstrap"
 import { NavLink } from "react-router-dom";
 import Logo from "../../images/logo.png"
 const Header = () =>{
+   const [isScrolling,setIsScrolling] = useState()
 
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        window.onscroll = () => {
+          let currentScrollPos = window.pageYOffset;
+          let maxScroll = document.body.scrollHeight - window.innerHeight;
+          if (currentScrollPos > 200 && currentScrollPos < maxScroll) {
+            setIsScrolling('visible')
+          } else {
+            setIsScrolling('')
+          }
+        }
+      }
+    })
     return(
         <>
        
@@ -12,7 +27,8 @@ const Header = () =>{
     </div> */}
 
    
-<header id="header">
+    <header id="header" className={`lazy-load ${isScrolling}`}>
+      
       <nav className="navbar navbar-default navbar-fixed-top menu">
         <Container className="dBlock">
 
@@ -33,6 +49,7 @@ const Header = () =>{
               <li className="dropdown">
                 <NavLink to="/">Home</NavLink>
               </li>
+             
               <li className="dropdown">
                 <NavLink to="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Newsfeed <span><img src="images/down-arrow.png" alt="" /></span></NavLink>
                 <ul className="dropdown-menu newsfeed-home">

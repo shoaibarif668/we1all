@@ -51,7 +51,7 @@ const RegistrationAndLoginForm = () => {
     fields[name] = value;
   }
   useEffect(() => {
-    if (currentId == '')
+    if (currentId === '')
       setValues({ ...initialFieldValues })
     else
       setValues({
@@ -61,7 +61,7 @@ const RegistrationAndLoginForm = () => {
 
   const addOrEdit = (obj) => {
     var uid;
-    if (currentId == '')
+    if (currentId === '')
       firebaseDb.auth().createUserWithEmailAndPassword(obj.email, obj.password)
         .then((userCredential) => {
           // Signed in 
@@ -75,7 +75,7 @@ const RegistrationAndLoginForm = () => {
         })
         .catch((error) => {
           
-          if(error.code=='auth/email-already-in-use') {
+          if(error.code==='auth/email-already-in-use') {
             toastr.clear()
             setTimeout(() => toastr.error(error.message), 300)  
           }
@@ -166,7 +166,7 @@ const RegistrationAndLoginForm = () => {
     if (typeof login.useremail !== "undefined") {
       let lastAtPos = login.useremail.lastIndexOf('@');
       let lastDotPos = login.useremail.lastIndexOf('.');
-      if (!(lastAtPos < lastDotPos && lastAtPos > 0 && login.useremail.indexOf('@@') == -1 && lastDotPos > 2 && (login.useremail.length - lastDotPos) > 2)) {
+      if (!(lastAtPos < lastDotPos && lastAtPos > 0 && login.useremail.indexOf('@@') === -1 && lastDotPos > 2 && (login.useremail.length - lastDotPos) > 2)) {
         toastr.clear()
         setTimeout(() => toastr.error(`Email is not valid`), 300)
         return;
