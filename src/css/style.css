@@ -410,8 +410,23 @@ textarea{
   font-size: 13px;
   font-weight: 600;
 }
+.menu ul.main-menu li.dropdown button{
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  background:transparent;
+  /* margin: 14px 15px; */
+}
+.menu ul.main-menu li.logout__dropdown{
+  display:flex;
+  align-items: center;
+}
+.menu ul.main-menu li.dropdown button:focus{
+ outline: none;
+}
 
-.menu ul.main-menu li.dropdown a:hover, .menu ul.main-menu li.dropdown a:active, .menu ul.main-menu li.dropdown a:focus{
+.menu ul.main-menu li.dropdown a:hover, .menu ul.main-menu li.dropdown a:active, .menu ul.main-menu li.dropdown a:focus,.menu ul.main-menu li.dropdown button:hover, .menu ul.main-menu li.dropdown button:active{
   color: #27aae1;
   background: none;
 }
@@ -2631,7 +2646,7 @@ a.navbar-brand {
 }
 .navbar-brand>img {
   width: 150px;
-  filter: brightness(0) invert(1);
+  /* filter: brightness(0) invert(1); */
 }
 .logo img{
   width: 150px;

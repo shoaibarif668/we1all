@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react"
 import firebaseDb from "../../firebase/firebase";
 import toastr from 'toastr'
+import { useHistory  } from "react-router-dom";
 import 'toastr/build/toastr.min.css'
 const RegistrationAndLoginForm = () => {
   var [currentId, setCurrentId] = useState('');
   var [usersObjects, setUsersObjects] = useState({})
-
+  let history = useHistory();
+  let isAuth = false;
   const initialFieldValues = {
     firstname: '',
     lastname: '',
@@ -187,11 +189,16 @@ const RegistrationAndLoginForm = () => {
     firebaseDb.auth().signInWithEmailAndPassword(login.useremail, login.userpassword)
       .then((userCredential) => {
         // Signed in
+        isAuth=true
         var user = userCredential.user;
+       
         toastr.clear()
         setTimeout(() => toastr.success(`Login Successful`), 300)
+        localStorage.setItem("userauth",isAuth)
+        history.push("/dashboard")
       })
       .catch((error) => {
+        isAuth=false
         var errorCode = error.code;
         var errorMessage = error.message;
       });
